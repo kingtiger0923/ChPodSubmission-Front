@@ -21,5 +21,6 @@ export default {
 }
 body {
   overflow-y: hidden;
+  margin: 0px!important;
 }
 </style>

@@ -1,26 +1,33 @@
 import Vue from "vue";
-import Router from "vue-router";
+import VueRouter from "vue-router";
 import LoginPage from "./views/LoginPage.vue";
-import AboutPage from "./views/AboutPage.vue";
+import Dashboard from "./views/Dashboard.vue";
+import UserManagement from './views/UserManagement.vue';
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export default new Router({
-  routes: [
-    {
-      path: "/",
-      name: "Login",
-      component: LoginPage,
-    },
-    {
-      path: "/login",
-      name: "Login",
-      component: LoginPage,
-    },
-    {
-      path: "/about",
-      name: "about",
-      component: AboutPage,
-    },
-  ],
+const routes = [
+  {
+    path: "/",
+    name: "Login",
+    component: LoginPage,
+  },
+  {
+    path: "/dashboard",
+    name: "dashBoard",
+    component: Dashboard,
+  },
+  {
+    path: "/admin",
+    name: "UserManagement",
+    component: UserManagement
+  }
+];
+
+const router = new VueRouter({
+  mode: "history",
+  base: process.env.BASE_URL,
+  routes,
 });
+
+export default router;
