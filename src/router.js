@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import LoginPage from "./views/LoginPage.vue";
 import Dashboard from "./views/Dashboard.vue";
 import UserManagement from './views/UserManagement.vue';
+import LessonDetail from './views/LessonDetail.vue';
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,12 @@ const routes = [
     path: "/admin",
     name: "UserManagement",
     component: UserManagement
+  },
+  {
+    path: "/lesson/:num",
+    name: "LessonDetail",
+    component: LessonDetail,
+    params: true
   }
 ];
 

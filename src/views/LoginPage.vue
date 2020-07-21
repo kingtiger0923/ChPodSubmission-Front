@@ -14,7 +14,7 @@
 
 <script>
 import GoogleLogin from 'vue-google-login';
-import Vue from 'vue';
+import {POST} from '../utils/api';
 
 export default {
   name: "App",
@@ -35,12 +35,10 @@ export default {
       var userId = googleUser.Qt.Bd;
       var api = this.$store.state.backend_URL + "/userLogin";
       console.log(api);
-      Vue.axios.post(api, {}, {
-        params: {
-          email : email,
-          userId: userId
-        }
-      }).then((response) => {
+      POST(api, {
+          email,
+          userId})
+      .then((response) => {
         if( response.data == "Reg Success1" ) {
           alert("Your account is not activated!");
         } else if( response.data == "Reg Success" ) {
@@ -68,7 +66,7 @@ export default {
 
 <style scoped>
 .page-content {
-  background-image: url('../assets/images/bg.png');
+  background-image: url('../assets/images/bg_login.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

@@ -1,18 +1,18 @@
 <template>
     <div class="navbar">
-        <div class="btn-signout" @click="Signout"><img src="../assets/images/signout.png"></div>
+        <div class="button-actions">
+        </div>
         <div class="buttons-group">
-            <div class="userAdmin" v-if="isAdmin" @click="UserManage"><img src="../assets/images/userManage.png"></div>
             <div class="userInfo" @click="Dashboard">
-                <div class="btn-name" >{{userName}}</div>
-                <div class="btn-user">{{userEmail}}</div>
+                <!-- <div class="btn-name" >{{userName}}</div> -->
+                <div class="btn-user"><span>Logged in as</span> {{userEmail}}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Vue from 'vue';
+import {POST} from '../utils/api';
 
 export default {
     data() {
@@ -48,10 +48,8 @@ export default {
     },
     mounted() {
         var api = this.$store.state.backend_URL + "/getUserInfo";
-        Vue.axios.post(api, {}, {
-            params: {
-                id: localStorage.user_Id
-            }
+        POST(api, {
+            id: localStorage.user_Id
         }).then((response) => {
             if( response.data == "error" ) {
                 localStorage.removeItem("user_Id");
@@ -75,13 +73,6 @@ export default {
 </script>
 
 <style scoped>
-.userAdmin {
-    margin-right: 2em;
-    color: white;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
 .userInfo {
     cursor: pointer;
 }
@@ -92,33 +83,54 @@ export default {
     align-items: center;
 }
 
+.button-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signOut {
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.signOut:hover {
+    background-color: #393939;
+}
+
 .navbar {
     background-color: #292929;
     min-height: 80px;
 }
 
 .btn-user {
-    color: #AAA;
-    font-size: 1.2em;
+    color: white;
+    font-size: 1.1em;
     font-weight: bold;
 }
 
-.btn-signout img {
-    width: 50px;
-}
-
-.btn-signout {
-    cursor: pointer;
-    padding: 10px;
+.btn-user span {
+    font-weight: normal;
+    font-size: 0.9em;
 }
 
 .btn-name {
     color: white;
-    font-size: 1.2em;
+    font-size: 0.9em;
     font-weight: bold;
 }
 
+.userAdmin {
+    padding: 8px 20px;
+    border-radius: 10px;
+}
+
+
 .userAdmin img {
-    width: 50px;
+    height: 35px;
 }
 </style>
