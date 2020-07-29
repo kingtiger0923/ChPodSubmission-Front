@@ -76,14 +76,21 @@
 
 <script>
 import {POST} from '../utils/api';
-import axios from 'axios';
 import Navbar from '../components/navbar';
-import SideBar from '../components/sidebar'
+import SideBar from '../components/sidebar';
+import { mapGetters } from 'vuex';
 
 export default {
+  computed: {
+    ...mapGetters([
+      "userData",
+      "isReceived",
+      "backendURL",
+      "_id"
+    ])
+  },
   data() {
       return {
-          userData : [],
           currentUser : {},
           currentUserIdx: 0,
           modalShow: false,
@@ -134,7 +141,7 @@ export default {
       this.modalShow = true;
     },
     SaveUser() {
-      var api = this.$store.state.backend_URL + "/editUser";
+      var api = this.backendURL + "/editUser";
       POST(api, {
         user: this.currentUser
       }).then((response) => {
@@ -151,15 +158,31 @@ export default {
     CloseModal() {
       this.modalShow = false;
     },
+    SignOut() {
+      localStorage.removeItem("user_Id");
+      this.$store.state.dataReceive = false;
+      this.$router.push({
+          name: "Login"
+      });
+    },
     getAssignmentsasString(idx) {
       return this.userData[idx].assignments.join(", ");
     }
   },
   mounted() {
-    var api = this.$store.state.backend_URL + "/getAllUsers";
-    axios.get(api).then((response) => {
-        this.userData = response.data;
-    });
+    if( !localStorage.user_Id ) {
+      this.SignOut();
+    } else if( !this.isReceived ) {
+      var api = this.backendURL + "/getFullData";
+      POST(api, {id: this._id})
+      .then((response) => {
+        this.$store.commit("ownUserReceived", response.data.user);
+        this.$store.commit("usersReceived", response.data.users);
+        this.$store.commit("lessonsReceived", response.data.lessons);
+        this.$store.commit("dataReceived", true);
+        localStorage.user_Id = response.data.user._id;
+      });
+    }
   }
 }
 </script>

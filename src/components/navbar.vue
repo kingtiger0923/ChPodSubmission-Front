@@ -12,15 +12,16 @@
 </template>
 
 <script>
-import {POST} from '../utils/api';
+
+import { mapGetters } from 'vuex';
 
 export default {
-    data() {
-        return {
-            userEmail: "",
-            userName: "",
-            isAdmin: false
-        }
+    computed: {
+        ...mapGetters([
+            "userEmail",
+            "userName",
+            "isAdmin"
+        ])
     },
     methods: {
         Signout() {
@@ -45,30 +46,7 @@ export default {
                 });
             }
         }
-    },
-    mounted() {
-        var api = this.$store.state.backend_URL + "/getUserInfo";
-        POST(api, {
-            id: localStorage.user_Id
-        }).then((response) => {
-            if( response.data == "error" ) {
-                localStorage.removeItem("user_Id");
-                this.$router.push({
-                    name: "Login"
-                });
-            } else if(response.data == "not activated") {
-                localStorage.removeItem("user_Id");
-                this.$router.push({
-                    name: "Login"
-                });
-            } else {
-                this.userEmail = response.data.email;
-                this.userName = response.data.userName;
-                this.isAdmin = response.data.admin;
-                
-            }
-        });
-    },
+    }
 }
 </script>
 

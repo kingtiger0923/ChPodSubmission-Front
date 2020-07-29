@@ -15,9 +15,14 @@
 <script>
 import GoogleLogin from 'vue-google-login';
 import {POST} from '../utils/api';
+import { mapGetters } from 'vuex';
 
 export default {
-  name: "App",
+  computed: {
+    ...mapGetters([
+      "backendURL"
+    ])
+  },
   data() {
     return {
       params: {
@@ -27,24 +32,27 @@ export default {
   },
   components: {
     GoogleLogin
-
   },
   methods: {
     onGoogleSuccess : function (googleUser) {
-      var email = googleUser.Qt.Au;
-      var userId = googleUser.Qt.Bd;
-      var api = this.$store.state.backend_URL + "/userLogin";
-      console.log(api);
+      var gUser = googleUser.getBasicProfile();
+      var email = gUser.getEmail();
+      var userId = gUser.getName();
+      
+      var api = this.backendURL + "/userLogin";
       POST(api, {
           email,
           userId})
       .then((response) => {
-        if( response.data == "Reg Success1" ) {
+        if( response.data == "Reg Success" ) {
           alert("Your account is not activated!");
-        } else if( response.data == "Reg Success" ) {
-          alert("Successfully Registered! Wait for a few days to be activated!");
         } else {
-          localStorage.user_Id = response.data;
+          this.$store.commit("ownUserReceived", response.data.user);
+          this.$store.commit("usersReceived", response.data.users);
+          this.$store.commit("lessonsReceived", response.data.lessons);
+          this.$store.commit("dataReceived", true);
+          
+          localStorage.user_Id = response.data.user._id;
           this.$router.push({
             name: "dashBoard"
           });

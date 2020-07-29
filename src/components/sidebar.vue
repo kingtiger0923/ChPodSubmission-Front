@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import {POST} from '../utils/api';
+import { mapGetters } from "vuex";
 export default {
-    data() {
-        return {
-            isAdmin: false,
-        };
+    computed: {
+        ...mapGetters([
+            "isAdmin"
+        ])
     },
     methods: {
         Lesson() {
@@ -28,6 +28,7 @@ export default {
         },
         Signout() {
             localStorage.removeItem("user_Id");
+            this.$store.state.dataReceive = false;
             if( this.$route.name != "Login" ) {
                 this.$router.push({
                     name: "Login"
@@ -42,25 +43,11 @@ export default {
             }
         }
     },
-    mounted() {
-        var api = this.$store.state.backend_URL + "/getUserInfo";
-        POST(api, {
-            id: localStorage.user_Id
-        }).then((response) => {
-            if( response.data == "error" ) {
-                localStorage.removeItem("user_Id");
-                this.$router.push({
-                    name: "Login"
-                });
-            } else if(response.data == "not activated") {
-                localStorage.removeItem("user_Id");
-                this.$router.push({
-                    name: "Login"
-                });
-            } else {
-                this.isAdmin = response.data.admin;
-            }
-        });
+    beforeMount() {
+        // window.addEventListener("beforeunload", event => {
+        //     event.preventDefault();
+        //     event.returnValue = "";
+        // });
     }
 }
 </script>

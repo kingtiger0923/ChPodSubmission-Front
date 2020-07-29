@@ -45,13 +45,16 @@
 import {POST} from '../utils/api';
 import Navbar from '../components/navbar';
 import SideBar from '../components/sidebar'
+import { mapGetters } from 'vuex';
 
 export default {
-  data() {
-    return {
-      lessonList: [],
-      lessondetails: []
-    }
+  computed: {
+    ...mapGetters([
+      'lessondetails',
+      "isReceived",
+      "backendURL",
+      "_id"
+    ])
   },
   components: {
     appNavbar: Navbar,
@@ -60,6 +63,7 @@ export default {
   methods: {
     SignOut() {
       localStorage.removeItem("user_Id");
+      this.$store.state.dataReceive = false;
       this.$router.push({
           name: "Login"
       });
@@ -72,27 +76,19 @@ export default {
     }
   },
   mounted() {
-    let api = this.$store.state.backend_URL + "/getLessons";
-    if( localStorage.user_Id ) {
-      POST(api, {
-        id: localStorage.user_Id
-      }).then((response) => {
-        if( response.data == "not activated" ) {
-          this.SignOut();
-        } else if( response.data == "error" ){
-          this.SignOut();
-        } else {
-          this.lessonList = response.data.lessons;
-          api = this.$store.state.backend_URL + '/getLessonsDetail';
-          POST(api, {
-            lessons: this.lessonList
-          }).then((response) => {
-            this.lessondetails = response.data;
-          });
-        }
-      });
-    } else {
+    if( !localStorage.user_Id ) {
       this.SignOut();
+    } else if( !this.isReceived ) {
+      var api = this.backendURL + "/getFullData";
+      POST(api, {id: this._id})
+      .then((response) => {
+        this.$store.commit("ownUserReceived", response.data.user);
+        this.$store.commit("usersReceived", response.data.users);
+        this.$store.commit("lessonsReceived", response.data.lessons);
+        this.$store.commit("dataReceived", true);
+        
+        localStorage.user_Id = response.data.user._id;
+      });
     }
   }
 }

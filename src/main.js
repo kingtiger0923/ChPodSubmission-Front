@@ -6,7 +6,7 @@ import VueAxios from 'vue-axios';
 import { store } from './store/store';
 
 Vue.use(VueAxios, axios);
-//axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:3000';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:3000';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 Vue.config.productionTip = false;
